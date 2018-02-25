@@ -51,21 +51,21 @@ def get_closest_bar(data, lon, lat):
 
 
 def _distance(lat1, lon1, lat2, lon2):
-    p = 0.017453292519943295
-    a = 0.5 - cos((lat2 - lat1) * p) / 2
-    b = cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
+    constant = 0.017453292519943295
+    a = 0.5 - cos((lat2 - lat1) * constant) / 2
+    b = cos(lat1 * constant) * cos(lat2 * constant) * (1 - cos((lon2 - lon1) * constant)) / 2
     return 12742 * asin(sqrt(a + b))
 
 
 if __name__ == '__main__':
     json_file_path = input("Путь к json-файлу: ")
-    data = load_data(json_file_path)
-    big_bar = get_biggest_bar(data)
-    small_bar = get_smallest_bar(data)
+    json_data = load_data(json_file_path)
+    big_bar = get_biggest_bar(json_data)
+    small_bar = get_smallest_bar(json_data)
 
     lon = float(input("Введите широту: "))
     lat = float(input("Введите долготу: "))
-    closest_bar = get_closest_bar(data, lon, lat)
+    closest_bar = get_closest_bar(json_data, lon, lat)
 
     print("Самый большой бар: " + big_bar)
     print("Самый маленький бар: " + small_bar)
