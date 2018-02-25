@@ -11,39 +11,39 @@ def load_data(filepath):
     return text
 
 
-def get_biggest_bar(data):
-    seats = max(_get_bar_seats_num(data))
-    return _get_biggest_or_smallest_bar_name(data, seats=seats)
+def get_biggest_bar(json_data):
+    seats = max(_get_bar_seats_num(json_data))
+    return _get_biggest_or_smallest_bar_name(json_data, seats=seats)
 
 
-def get_smallest_bar(data):
-    seats = min(_get_bar_seats_num(data))
-    return _get_biggest_or_smallest_bar_name(data, seats=seats)
+def get_smallest_bar(json_data):
+    seats = min(_get_bar_seats_num(json_data))
+    return _get_biggest_or_smallest_bar_name(json_data, seats=seats)
 
 
-def _get_bar_seats_num(data):
+def _get_bar_seats_num(json_data):
     res = []
-    features = json.loads(data)["features"]
+    features = json.loads(json_data)["features"]
     for feature in range(len(features)):
         res.append(features[feature]["properties"]["Attributes"]["SeatsCount"])
     return res
 
 
-def _get_biggest_or_smallest_bar_name(data, seats):
-    features = json.loads(data)["features"]
+def _get_biggest_or_smallest_bar_name(json_data, seats):
+    features = json.loads(json_data)["features"]
     for feature in range(len(features)):
         bar_attributes = features[feature]["properties"]["Attributes"]
         if (seats == bar_attributes["SeatsCount"]):
             return bar_attributes["Name"]
 
 
-def get_closest_bar(data, lon, lat):
+def get_closest_bar(json_data, lon, lat):
     res = []
-    features = json.loads(data)["features"]
+    features = json.loads(json_data)["features"]
     for feature in range(len(features)):
         res.append(features[feature]["geometry"]["coordinates"])
     clos_coord = min(res, key=lambda crd: _distance(lon, lat, crd[0], crd[1]))
-    features = json.loads(data)["features"]
+    features = json.loads(json_data)["features"]
     for feature in range(len(features)):
         bar_coords = features[feature]["geometry"]["coordinates"]
         if (clos_coord[0] == bar_coords[0] and clos_coord[1] == bar_coords[1]):
@@ -51,10 +51,11 @@ def get_closest_bar(data, lon, lat):
 
 
 def _distance(lat1, lon1, lat2, lon2):
-    constant = 0.017453292519943295
-    a = 0.5 - cos((lat2 - lat1) * constant) / 2
-    b = cos(lat1 * constant) * cos(lat2 * constant) * (1 - cos((lon2 - lon1) * constant)) / 2
-    return 12742 * asin(sqrt(a + b))
+    const = 0.017453292519943295
+    arg_one = 0.5 - cos((lat2 - lat1) * const) / 2
+    arg_two = cos(lat1 * const) * cos(lat2 * const)
+    arg_three = (1 - cos((lon2 - lon1) * const)) / 2
+    return 12742 * asin(sqrt(arg_one + arg_two * arg_three))
 
 
 if __name__ == '__main__':
